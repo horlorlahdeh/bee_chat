@@ -2,12 +2,13 @@ import { AUTH_SOCKET, SET_LIVE, SEND_MSG } from './types';
 import ws from '../socket/socket';
 import store from '../store';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getAllConversations } from './message';
+// import { getAllConversations } from './message';
 
-export const connectWebsocket = () => async (dispatch) => {
+export const connectWebsocket = (tokenText) => async (dispatch) => {
   try {
-    let token = await AsyncStorage.getItem('refresh_token');
-
+    // let token = await AsyncStorage.getItem('refresh_token');
+    let token = tokenText;
+    console.log(token)
     let payload = {
       token: token,
     };
@@ -21,35 +22,35 @@ export const connectWebsocket = () => async (dispatch) => {
 };
 
 export const getWebSocketMessage = (context) => async (dispatch) => {
-  dispatch(getAllConversations());
+  // dispatch(getAllConversations());
   console.log('take chat to up-side');
   try {
     ws.onmessage = async (e) => {
-      let dataFromServer = JSON.parse(e.data);
+      let wsData = JSON.parse(e.data);
 
       if (
-        dataFromServer.type === 'status' &&
-        dataFromServer.payload.authenticated
+        wsData.type === 'status' &&
+        wsData.payload.authenticated
       ) {
         dispatch({
           type: AUTH_SOCKET,
-          payload: dataFromServer.payload,
+          payload: wsData.payload,
         });
       }
-      if (dataFromServer.type === 'conversation-created') {
+      if (wsData.type === 'conversation-created') {
         dispatch({
           type: SET_LIVE,
-          payload: dataFromServer.payload,
+          payload: wsData.payload,
         });
-        dispatch(getAllConversations());
-        console.log(dataFromServer.payload);
+        // dispatch(getAllConversations());
+        console.log(wsData.payload);
       }
-      if (dataFromServer.type === 'chat-message') {
+      if (wsData.type === 'chat-message') {
         dispatch({
           type: SET_LIVE,
-          payload: dataFromServer.payload,
+          payload: wsData.payload,
         });
-        console.log(dataFromServer.payload);
+        console.log(wsData.payload);
       }
     };
   } catch (err) {

@@ -8,7 +8,7 @@ import React, {
   Fragment,
 } from 'react';
 import { StyleSheet, View, Platform } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { GeneralHeader } from '../components/GeneralHeader';

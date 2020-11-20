@@ -11,6 +11,7 @@ const initialState = {
   conversation: [],
   channels: [],
   messages: [],
+  unread: null,
   reply: [],
   members: [],
   recipient: '',
@@ -24,6 +25,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         conversations: payload.data,
+
       };
     case SET_MEMBERS:
       return {

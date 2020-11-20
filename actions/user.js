@@ -39,7 +39,7 @@ export const loadUser = () => async (dispatch) => {
     });
 
     // dispatch(getWebSocketMessage());
-    dispatch(connectWebsocket());
+    dispatch(connectWebsocket(token));
   } catch (err) {
     console.error(err.response.data.message);
     dispatch({
@@ -66,11 +66,10 @@ export const setRefreshToken = () => async (dispatch) => {
 export const login = (username, key) => async (dispatch) => {
   const ts = Date.now();
   const privateKey = PrivateKey.fromString(key);
-
-  const sig = await privateKey
-    .sign(Buffer.from(cryptoUtils.sha256(username + ts)))
+  const sig = privateKey
+    .sign(Buffer.from(cryptoUtils.sha256(`${username}${ts}`)))
     .toString();
-
+  console.log(sig)
   try {
     const data = await axios.get(
       'https://beechat.hive-engine.com/api/users/login',
@@ -82,19 +81,16 @@ export const login = (username, key) => async (dispatch) => {
         },
       }
     );
-    dispatch(
-      {
-        type: LOGIN_SUCCESS,
-        payload: data.data,
-      },
-
-      console.log(data.data)
-    );
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: data.data,
+    });
+    console.log(sig, ts, username);
+    dispatch(connectWebsocket(data.data.refresh_token));
     dispatch(loadUser());
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     dispatch({ type: LOGIN_FAIL });
-    //do nothing for now
   }
 };
 export const logout = () => async (dispatch) => {

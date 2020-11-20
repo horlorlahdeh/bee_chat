@@ -40,7 +40,7 @@ const _ChatListScreen = ({
   useEffect(() => {
     if (didMount) {
       getAllConversations();
-      console.log(conversations);
+      // console.log(conversations);
     }
     return () => {
       setDidMount(false);
@@ -54,7 +54,7 @@ const _ChatListScreen = ({
       <FlatList
         data={conversations}
         renderItem={({ item }) => {
-          return <ChatListItem item={item} />;
+          return <ChatListItem item={item} items={conversations} />;
         }}
         keyExtractor={(item, id) => id.toString()}
       />
@@ -111,7 +111,7 @@ const _ChatListScreen = ({
                   createChat(message, recipient);
                 }}
               >
-                <Text style={styles.textStyle}>Smart Lock</Text>
+                <Text style={styles.textStyle}>Create Conversation</Text>
               </TouchableHighlight>
               <TextButton
                 style={styles.textButton}
