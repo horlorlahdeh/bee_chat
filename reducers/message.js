@@ -4,13 +4,15 @@ import {
   SET_UNREAD,
   SET_LIVE,
   SET_MEMBERS,
+  SET_READ,
 } from '../actions/types';
 
 const initialState = {
   conversations: [],
   conversation: [],
   channels: [],
-  messages: [],
+  unreadMessages: [],
+  unread: null,
   reply: [],
   members: [],
   recipient: '',
@@ -24,6 +26,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         conversations: payload.data,
+
       };
     case SET_MEMBERS:
       return {
@@ -48,8 +51,9 @@ export default function (state = initialState, action) {
     case SET_UNREAD:
       return {
         ...state,
-        messages: payload.data,
+        unreadMessages: payload.data,
       };
+      case SET_READ: unreadMessages.reduce((total, curr) => {}, 10)
 
     default:
       return state;

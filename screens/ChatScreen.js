@@ -9,7 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
 } from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
+// import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview'
 import { ChatBubble } from '../components/ChatBubble';
 import { Header } from '../components/Header';
 import { MainAppHeader } from '../components/MainAppHeader';

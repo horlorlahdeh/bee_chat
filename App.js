@@ -10,8 +10,7 @@ import store from './store';
 
 import { loadUser } from './actions/user';
 import Routes from './routes/Routes';
-import ws from './socket/socket';
-
+import { ws, startWebsocket } from './socket/socket';
 let getTokenValue = async () => await AsyncStorage.getItem('refresh_token');
 let token = getTokenValue();
 let ref_token = store.getState().auth.refresh_token;
@@ -24,18 +23,13 @@ if (token) {
 const App = () => {
   useEffect(() => {
     store.dispatch(loadUser());
-
-    ws.onerror = function (evt) {
-      console.log(evt);
-    };
+    async function callStartWebsocket() {
+      let ref_token = await store.getState().auth.refresh_token;
+      startWebsocket(ref_token);
+    }
+    callStartWebsocket();
     return () => {
       ws.close();
-      ws.onclose = function (evt) {
-        // if (evt.type === 'close') {
-        //   setTimeout(connectWS(), 10000);
-        // }
-        console.log('Connection Closed', evt);
-      };
     };
   }, [token]);
 

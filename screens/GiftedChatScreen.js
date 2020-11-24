@@ -8,7 +8,8 @@ import React, {
   Fragment,
 } from 'react';
 import { StyleSheet, View, Platform } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { GeneralHeader } from '../components/GeneralHeader';
@@ -22,10 +23,11 @@ import {
   createChat,
   sendMessage,
   getWebSocketMessage,
+  deleteMessage,
+  setRead,
 } from '../actions/socket';
 import { LoadingScreen } from '../components/LoadingScreen';
-import ws from '../socket/socket';
-import AsyncStorage from '@react-native-community/async-storage';
+import { ws } from '../socket/socket';
 
 const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
   route: { params },
@@ -34,6 +36,8 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
   getConversation,
   getAllConversations,
   sendMessage,
+  deleteMessage,
+  setRead,
 }) {
   const [chatMessage, setChatMessage] = useState('');
   const [didMount, setDidMount] = useState(conversation ? true : false);
@@ -117,6 +121,29 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
     sendMessage(messages.text, to, id);
     chatRef.current.scrollToBottom();
   }, []);
+  const onLongPress = (context, message) => {
+    console.log(context, message);
+    const options = ['copy', 'Delete Message', 'Cancel'];
+    const cancelButtonIndex = options.length - 1;
+    context.actionSheet().showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            Clipboard.setString(this.props.currentMessage.text);
+            break;
+          case 1:
+            //code to delete
+            break;
+        }
+      }
+    );
+  };
+
+  ////////////////
   const newArray = conversation.map((message) => ({
     _id: message.id,
     createdAt: message.timestamp,
@@ -130,6 +157,7 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
   useEffect(() => {
     if (didMount) {
       getConversation(id);
+      setRead(id);
       setTimeout(() => {
         chatRef.current.scrollToBottom();
       }, 1000);
@@ -167,6 +195,8 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
         renderSend={renderSend}
         renderUsernameOnMessage={true}
         inverted={false}
+        onLongPress={onLongPress}
+        // keyboardShouldPersistTaps={'always'}
       />
       {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
     </Fragment>
@@ -228,5 +258,7 @@ const GiftedChatScreen = connect(mapStateToProps, {
   sendMessage,
   getAllConversations,
   getAllMembers,
+  deleteMessage,
+  setRead,
 })(_GiftedChatScreen);
 export { GiftedChatScreen };

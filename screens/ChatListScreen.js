@@ -23,7 +23,7 @@ import { createChat } from '../actions/socket';
 const _ChatListScreen = ({
   getAllConversations,
   createChat,
-  message: { conversations, messages },
+  message: { conversations, unreadMessages },
 }) => {
   const [headerTexts, setHeaderText] = useState({
     privateTitle: 'Private',
@@ -40,7 +40,7 @@ const _ChatListScreen = ({
   useEffect(() => {
     if (didMount) {
       getAllConversations();
-      console.log(conversations);
+      // console.log(conversations);
     }
     return () => {
       setDidMount(false);
@@ -50,11 +50,11 @@ const _ChatListScreen = ({
   }, [conversations]);
   return (
     <View style={styles.container}>
-      <MainAppHeader title={headerTexts} notification={messages.length} />
+      <MainAppHeader title={headerTexts} notification={unreadMessages.length} />
       <FlatList
         data={conversations}
         renderItem={({ item }) => {
-          return <ChatListItem item={item} />;
+          return <ChatListItem item={item} items={conversations} />;
         }}
         keyExtractor={(item, id) => id.toString()}
       />
@@ -66,7 +66,7 @@ const _ChatListScreen = ({
           padding: 20,
           height: 70,
           width: 70,
-          borderRadius: '100 / 2',
+          borderRadius: 100 / 2,
           backgroundColor: 'goldenrod',
           zIndex: 999,
         }}
@@ -111,7 +111,7 @@ const _ChatListScreen = ({
                   createChat(message, recipient);
                 }}
               >
-                <Text style={styles.textStyle}>Smart Lock</Text>
+                <Text style={styles.textStyle}>Create Conversation</Text>
               </TouchableHighlight>
               <TextButton
                 style={styles.textButton}

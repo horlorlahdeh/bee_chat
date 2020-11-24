@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     channels: state.auth.channels,
-    message: state.message.messages
+    message: state.message.unreadMessages
   };
 };
 const GroupChatScreen = connect(mapStateToProps, { userChannels })(

@@ -17,7 +17,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.beechat.hive-engine"
+    },
+    "android": {
+      "versionCode": 1,
+      "package": "com.hiveengine.beechat"
     },
     "web": {
       "favicon": "./assets/favicon.png"

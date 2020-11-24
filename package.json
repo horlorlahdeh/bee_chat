@@ -8,7 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@hiveio/dhive": "^0.14.1",
+    "@hiveio/dhive": "^0.14.12",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/native": "^5.7.5",
@@ -17,6 +17,7 @@
     "buffer": "^5.6.0",
     "crypto-js": "^4.0.0",
     "expo": "~39.0.2",
+    "expo-secure-store": "~9.2.0",
     "expo-status-bar": "~1.0.2",
     "hoist-non-react-statics": "^3.3.2",
     "react": "16.13.1",
@@ -27,6 +28,7 @@
     "react-native-gesture-handler": "~1.7.0",
     "react-native-gifted-chat": "^0.16.3",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
+    "react-native-keyboard-spacer": "^0.4.1",
     "react-native-popup-menu": "^0.15.9",
     "react-native-randombytes": "^3.5.3",
     "react-native-reanimated": "~1.13.0",
@@ -40,8 +42,7 @@
     "redux-thunk": "^2.3.0",
     "uuidv4": "^6.2.3",
     "websocket": "^1.0.32",
-    "ws": "^7.3.1",
-    "expo-secure-store": "~9.2.0"
+    "ws": "^7.3.1"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

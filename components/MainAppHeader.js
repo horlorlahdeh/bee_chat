@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { logout } from '../actions/user';
-import { getAllConversations } from '../actions/message';
+import { getAllConversations, getUnread } from '../actions/message';
+
 import { connect } from 'react-redux';
 
 export const _MainAppHeader = ({
@@ -12,9 +13,18 @@ export const _MainAppHeader = ({
   notification,
   logout,
   getAllConversations,
+  getUnread,
 }) => {
   const navigation = useNavigation();
   const [isActive, setIsActive] = useState(title.id);
+
+  useEffect(() => {
+    getUnread();
+    console.log(notification);
+    return () => {
+      // cleanup
+    };
+  }, []);
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -44,6 +54,12 @@ export const _MainAppHeader = ({
       </TouchableOpacity>
 
       <TouchableOpacity
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          paddingHorizontal: 15,
+        }}
         onPress={() => {
           navigation.navigate('Chats');
           setIsActive(1);
@@ -51,8 +67,10 @@ export const _MainAppHeader = ({
       >
         <Text style={isActive === 1 ? styles.active : styles.text}>
           {title.privateTitle}{' '}
-          <Text style={styles.notification}>{notification}</Text>
         </Text>
+        {notification.length > 0 && (
+          <Text style={styles.notification}>{notification.length}</Text>
+        )}
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
@@ -107,7 +125,7 @@ const styles = StyleSheet.create({
   active: {
     color: '#000',
     fontSize: 18,
-    paddingHorizontal: 30,
+
     paddingBottom: 15,
     textTransform: 'capitalize',
     borderBottomWidth: 2,
@@ -132,20 +150,29 @@ const styles = StyleSheet.create({
   },
   notification: {
     color: 'goldenrod',
-    fontSize: 15,
+    fontSize: 12,
+    overflow: 'hidden',
     padding: 8,
-    // lineHeight: 25,
-    // marginLeft: 'auto',
+    marginRight: 0,
+    lineHeight: 15,
     backgroundColor: '#000',
-    height: 25,
-    width: 25,
-    borderRadius: 100 / 2,
+    height: 30,
+    width: 30,
+    borderRadius: 30 / 2,
     textAlign: 'center',
     alignSelf: 'center',
+    marginBottom: 8,
   },
 });
 
-const MainAppHeader = connect(null, { logout, getAllConversations })(
-  _MainAppHeader
-);
+const mapStateToProps = (state) => {
+  return {
+    notification: state.message.unreadMessages,
+  };
+};
+const MainAppHeader = connect(mapStateToProps, {
+  logout,
+  getAllConversations,
+  getUnread,
+})(_MainAppHeader);
 export { MainAppHeader };

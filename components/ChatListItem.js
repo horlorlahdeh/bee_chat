@@ -7,12 +7,37 @@ import { getUnread } from '../actions/message';
 
 // import { Avatar, Button, Header, Accessory } from 'react-native-elements';
 
-const _ListItem = ({ item, auth, getUnread, messages }) => {
+const _ListItem = ({ item, items, auth, getUnread, messages }) => {
   const navigation = useNavigation();
   const itemArr = item.members.filter((e) => e !== auth.username);
   useEffect(() => {
-    // getUnread();
-    console.log('item',itemArr)
+    getUnread();
+
+    // let number = items.map((r) => ({
+    //     ...r,
+    //     members: r.members.filter((m) => m !== auth.username),
+    //     updated_at: new Date(r.updated_at).getTime(),
+    //   }))
+    //   .sort((a, b) => b.updated_at - a.updated_at)
+    //   .reduce((acc, cur) => {
+    //     const newMessages = items.filter(
+    //       (m) =>
+    //         m.conversation_id === cur.id &&
+    //         (m.to === auth.username || m.to === null) &&
+    //         m.read === false
+    //     );
+
+    //     if (!cur.name) {
+    //       cur.name = cur.members.join(', ');
+    //     }
+
+    //     acc.push({ ...cur, unread: newMessages.length });
+
+    //     return acc;
+    //   }, []);
+
+
+   
   }, []);
   return (
     <TouchableOpacity
@@ -34,7 +59,9 @@ const _ListItem = ({ item, auth, getUnread, messages }) => {
         <Text style={styles.text}>
           {itemArr.length > 1 ? itemArr.join(', ') : itemArr}{' '}
         </Text>
-        <Text style={styles.messageCount}>{messages.length}</Text>
+        {messages.length > 0 && <Text style={ styles.messageCount}>
+          {Math.floor(Math.random() * messages.length + 1)}
+        </Text>}
       </View>
     </TouchableOpacity>
   );
@@ -75,13 +102,13 @@ const styles = StyleSheet.create({
   messageCount: {
     color: '#000',
     fontSize: 12,
-    lineHeight: 20,
+    lineHeight: 30,
     marginLeft: 'auto',
-
+    overflow: 'hidden',
     backgroundColor: 'goldenrod',
-    height: 20,
-    width: 20,
-    borderRadius: 100 / 2,
+    height: 30,
+    width: 30,
+    borderRadius: 30/2,
     textAlign: 'center',
     alignSelf: 'center',
   },
@@ -90,7 +117,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-    messages: state.message.messages,
+    messages: state.message.unreadMessages,
   };
 };
 

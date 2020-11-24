@@ -15,10 +15,15 @@ import AsyncStorage from '@react-native-community/async-storage';
 import setAuthToken from '../utils/setAuthToken';
 import { PrivateKey, cryptoUtils, Client } from '@hiveio/dhive';
 // import CryptoJS from 'crypto-js'
+// import { ws, startWebsocket } from '../socket/socket';
 import { Buffer } from 'buffer';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
-import { getWebSocketMessage, connectWebsocket } from './socket';
+import {
+  getWebSocketMessage,
+  connectWebsocket,
+  startWebsocket,
+} from './socket';
 
 var hClient = new Client('https://api.hive.blog');
 
@@ -37,16 +42,13 @@ export const loadUser = () => async (dispatch) => {
       type: USER_LOADED,
       payload: data.data.username,
     });
-
-    // dispatch(getWebSocketMessage());
-    dispatch(connectWebsocket());
   } catch (err) {
     console.error(err.response.data.message);
     dispatch({
       type: AUTH_ERROR,
     });
   }
-  // dispatch(setRefreshToken())
+  dispatch(setRefreshToken());
 };
 // Set Refresh Token
 export const setRefreshToken = () => async (dispatch) => {
@@ -64,13 +66,16 @@ export const setRefreshToken = () => async (dispatch) => {
 };
 // Login User
 export const login = (username, key) => async (dispatch) => {
+  let token = await AsyncStorage.getItem('refresh_token');
   const ts = Date.now();
+  // if(!wif) {
+
+  // }
   const privateKey = PrivateKey.fromString(key);
-
-  const sig = await privateKey
-    .sign(Buffer.from(cryptoUtils.sha256(username + ts)))
+  const sig = privateKey
+    .sign(Buffer.from(cryptoUtils.sha256(`${username}${ts}`)))
     .toString();
-
+  console.log(sig);
   try {
     const data = await axios.get(
       'https://beechat.hive-engine.com/api/users/login',
@@ -82,19 +87,20 @@ export const login = (username, key) => async (dispatch) => {
         },
       }
     );
-    dispatch(
-      {
-        type: LOGIN_SUCCESS,
-        payload: data.data,
-      },
+    dispatch({
+      type: LOGIN_SUCCESS,
+      payload: data.data,
+    });
+    console.log(sig, ts, username);
+    // dispatch(connectWebsocket(data.data.refresh_token));
 
-      console.log(data.data)
-    );
+    setTimeout(() => {
+      dispatch(startWebsocket(token));
+    }, 1000);
     dispatch(loadUser());
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     dispatch({ type: LOGIN_FAIL });
-    //do nothing for now
   }
 };
 export const logout = () => async (dispatch) => {
