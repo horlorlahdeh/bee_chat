@@ -66,7 +66,7 @@ const _ChatListScreen = ({
           padding: 20,
           height: 70,
           width: 70,
-          borderRadius: '100 / 2',
+          borderRadius: 100 / 2,
           backgroundColor: 'goldenrod',
           zIndex: 999,
         }}
