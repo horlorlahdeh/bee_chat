@@ -1,4 +1,10 @@
-import { SET_CONVERSATIONS, SET_CONVERSATION, SET_UNREAD, SET_MEMBERS } from './types';
+import {
+  SET_CONVERSATIONS,
+  SET_CONVERSATION,
+  SET_UNREAD,
+  SET_MEMBERS,
+  DELETE_MESSAGE,
+} from './types';
 import { getWebSocketMessage } from './socket';
 import axios from 'axios';
 
@@ -36,18 +42,18 @@ export const getConversation = (id) => async (dispatch) => {
     type: SET_CONVERSATION,
     payload: data,
   });
-   dispatch(getWebSocketMessage());
-   dispatch(getAllConversations());
+  dispatch(getWebSocketMessage());
+  dispatch(getAllConversations());
   // console.log(data)
 };
 export const getUnread = () => async (dispatch) => {
   const data = await axios.get(
     'https://beechat.hive-engine.com/api/messages/new'
   );
-  
+
   dispatch({
     type: SET_UNREAD,
     payload: data,
   });
-  // console.log(data)
+  console.log(data.data)
 };

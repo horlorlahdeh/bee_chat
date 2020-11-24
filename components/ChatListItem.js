@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-    messages: state.message.messages,
+    messages: state.message.unreadMessages,
   };
 };
 

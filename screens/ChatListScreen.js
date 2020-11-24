@@ -23,7 +23,7 @@ import { createChat } from '../actions/socket';
 const _ChatListScreen = ({
   getAllConversations,
   createChat,
-  message: { conversations, messages },
+  message: { conversations, unreadMessages },
 }) => {
   const [headerTexts, setHeaderText] = useState({
     privateTitle: 'Private',
@@ -50,7 +50,7 @@ const _ChatListScreen = ({
   }, [conversations]);
   return (
     <View style={styles.container}>
-      <MainAppHeader title={headerTexts} notification={messages.length} />
+      <MainAppHeader title={headerTexts} notification={unreadMessages.length} />
       <FlatList
         data={conversations}
         renderItem={({ item }) => {

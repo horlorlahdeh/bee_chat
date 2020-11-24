@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    notification: state.message.messages,
+    notification: state.message.unreadMessages,
   };
 };
 const MainAppHeader = connect(mapStateToProps, {

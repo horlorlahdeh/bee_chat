@@ -1,24 +1,53 @@
-import { AUTH_SOCKET, SET_LIVE, SEND_MSG } from './types';
-import ws from '../socket/socket';
+import { SOCKET_OPEN, SET_LIVE, SEND_MSG, DELETE_MESSAGE, SET_READ } from './types';
+import { ws } from '../socket/socket';
 import store from '../store';
 import AsyncStorage from '@react-native-community/async-storage';
 // import { getAllConversations } from './message';
 
-export const connectWebsocket = (tokenText) => async (dispatch) => {
+export const connectWebsocket = () => async (dispatch) => {
   try {
-    // let token = await AsyncStorage.getItem('refresh_token');
-    let token = tokenText;
-    console.log(token)
+    let token = await AsyncStorage.getItem('refresh_token');
+
+    console.log(token);
     let payload = {
       token: token,
     };
-    ws.onopen = async () => {
+    ws.onopen = async (e) => {
       ws.send(JSON.stringify({ type: 'authenticate', payload: payload }));
-      console.log('Websocket Client Connected');
+      console.log('Websocket Client Re-Connected', e);
     };
   } catch (err) {
     console.error(err);
   }
+};
+export const startWebsocket = (token) => async (dispatch) => {
+  let socket = ws;
+  socket.onopen = (e) => {
+    console.log('Connected to Websockets');
+    let payload = {
+      token: token,
+    };
+
+    socket.send(JSON.stringify({ type: 'authenticate', payload: payload }));
+    console.log('Websocket Client Connected', e, token);
+  };
+  socket.onmessage = function (e) {
+    console.log(
+      'websocket message event:',
+      JSON.parse(e.data).payload.authenticated
+    );
+    if (!JSON.parse(e.data).payload.authenticated) {
+      setTimeout(startWebsocket, 500);
+    }
+  };
+  socket.onerror = function (e) {
+    console.log(e);
+  };
+  socket.onclose = function () {
+    // connection closed, discard old websocket and create a new one in 5s
+    socket = null;
+    setTimeout(startWebsocket, 5000);
+  };
 };
 
 export const getWebSocketMessage = (context) => async (dispatch) => {
@@ -28,12 +57,9 @@ export const getWebSocketMessage = (context) => async (dispatch) => {
     ws.onmessage = async (e) => {
       let wsData = JSON.parse(e.data);
 
-      if (
-        wsData.type === 'status' &&
-        wsData.payload.authenticated
-      ) {
+      if (wsData.type === 'status' && wsData.payload.authenticated) {
         dispatch({
-          type: AUTH_SOCKET,
+          type: SOCKET_OPEN,
           payload: wsData.payload,
         });
       }
@@ -48,6 +74,13 @@ export const getWebSocketMessage = (context) => async (dispatch) => {
       if (wsData.type === 'chat-message') {
         dispatch({
           type: SET_LIVE,
+          payload: wsData.payload,
+        });
+        console.log(wsData.payload);
+      }
+      if (wsData.type === 'acknowledged') {
+        dispatch({
+          type: SET_READ,
           payload: wsData.payload,
         });
         console.log(wsData.payload);
@@ -95,3 +128,35 @@ export const sendMessage = (message, to, id) => async (dispatch) => {
     console.error(err);
   }
 };
+
+// Yet to be resolved
+export const deleteMessage = (id) => async (dispatch) => {
+  try {
+    ws.send(
+      JSON.stringify({
+        type: 'delete-message',
+        payload: {
+          id: id,
+        },
+      })
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
+export const setRead = (id) => async (dispact) => {
+try {
+    ws.send(
+      JSON.stringify({
+        type: 'acknowledgment',
+        payload: {
+          conversation_id: id,
+        },
+      })
+    );
+  } catch (err) {
+    console.error(err);
+  }
+}

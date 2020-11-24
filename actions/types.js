@@ -21,3 +21,5 @@ export const SOCKET_CLOSE = 'SOCKET_CLOSE';
 export const SEND_MSG = 'SEND_MSG';
 export const AUTH_SOCKET = 'AUTH_SOCKET';
 export const HIVE_DATA = 'HIVE_DATA';
+export const DELETE_MESSAGE = 'DELETE_MESSAGE';
+export const SET_READ = 'SET_READ'

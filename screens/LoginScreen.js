@@ -14,7 +14,6 @@ import { Input } from '../components/Input';
 import { FilledButton } from '../components/FilledButton';
 import { TextButton } from '../components/TextButton';
 import { Error } from '../components/Error';
-import { SecureStore } from 'expo';
 import { login, pinLock } from '../actions/user';
 
 const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput }) => {
