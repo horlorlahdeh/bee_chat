@@ -1,6 +1,7 @@
 export const WS_URL = 'wss://ws.beechat.hive-engine.com';
 export const ws = new WebSocket(WS_URL);
 export const startWebsocket = async (token) => {
+  
   let socket = ws;
   socket.onopen = (e) => {
     console.log('Connected to Websockets');

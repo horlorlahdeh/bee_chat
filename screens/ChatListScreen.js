@@ -11,6 +11,7 @@ import {
   Modal,
   TouchableHighlight,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { Input } from '../components/Input';
 import { TextButton } from '../components/TextButton';
 import { ChatListItem } from '../components/ChatListItem';
@@ -19,6 +20,8 @@ import { MainAppHeader } from '../components/MainAppHeader';
 import { connect } from 'react-redux';
 import { getAllConversations } from '../actions/message';
 import { createChat } from '../actions/socket';
+import { ws, startWebsocket } from '../socket/socket';
+
 
 const _ChatListScreen = ({
   getAllConversations,
@@ -36,11 +39,20 @@ const _ChatListScreen = ({
   const [message, setMessage] = useState();
   const [recipient, setRecipient] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-
+ 
   useEffect(() => {
     if (didMount) {
       getAllConversations();
       // console.log(conversations);
+      async function callStartWebsocket() {
+        let token = await AsyncStorage.getItem('refresh_token');
+        startWebsocket(token);
+      }
+      if (ws.readyState === 0 || 2 || 3) {
+        // Do your stuff...
+        callStartWebsocket();
+      }
+      callStartWebsocket()
     }
     return () => {
       setDidMount(false);
@@ -50,7 +62,7 @@ const _ChatListScreen = ({
   }, [conversations]);
   return (
     <View style={styles.container}>
-      <MainAppHeader title={headerTexts} notification={unreadMessages.length} />
+      <MainAppHeader title={headerTexts} notification={unreadMessages > 0 ? unreadMessages.length : null} />
       <FlatList
         data={conversations}
         renderItem={({ item }) => {

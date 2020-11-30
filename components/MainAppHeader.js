@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
+import { useRoute } from '@react-navigation/native';
 import { StyleSheet, Image, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -7,6 +8,7 @@ import { logout } from '../actions/user';
 import { getAllConversations, getUnread } from '../actions/message';
 
 import { connect } from 'react-redux';
+import { GiftedChat } from 'react-native-gifted-chat';
 
 export const _MainAppHeader = ({
   title,
@@ -16,13 +18,19 @@ export const _MainAppHeader = ({
   getUnread,
 }) => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const [didMount, setDidMount] = useState(notification ? true : false);
   const [isActive, setIsActive] = useState(title.id);
 
   useEffect(() => {
-    getUnread();
-    console.log(notification);
+    if (didMount) {
+      getUnread();
+      console.log(notification);
+      console.log(route.name);
+    }
     return () => {
       // cleanup
+      setDidMount(false);
     };
   }, []);
   return (
@@ -65,9 +73,9 @@ export const _MainAppHeader = ({
           setIsActive(1);
         }}
       >
-        <Text style={isActive === 1 ? styles.active : styles.text}>
-          {title.privateTitle}{' '}
-        </Text>
+        <View style={route.name === 'Chats' ? styles.active : ''}>
+          <Text style={styles.text}>{title.privateTitle} </Text>
+        </View>
         {notification.length > 0 && (
           <Text style={styles.notification}>{notification.length}</Text>
         )}
@@ -78,9 +86,9 @@ export const _MainAppHeader = ({
           setIsActive(2);
         }}
       >
-        <Text style={isActive === 2 ? styles.active : styles.text}>
-          {title.groupTitle}
-        </Text>
+        <View style={route.name === 'GroupChats' ? styles.active : ''}>
+          <Text style={styles.text}>{title.groupTitle}</Text>
+        </View>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
@@ -88,9 +96,15 @@ export const _MainAppHeader = ({
           setIsActive(3);
         }}
       >
-        <Text style={isActive === 3 ? styles.active : styles.text}>
-          {title.friendsTitle}
-        </Text>
+        <View 
+          style={route.name === 'Friends' ? styles.active : ''}>
+        
+          <Text 
+        style={styles.text}>
+          
+            {title.friendsTitle}
+          </Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -118,17 +132,13 @@ const styles = StyleSheet.create({
   text: {
     color: '#000',
     fontSize: 18,
-    paddingHorizontal: 30,
+    paddingHorizontal: 35,
     paddingBottom: 15,
     textTransform: 'capitalize',
   },
   active: {
-    color: '#000',
-    fontSize: 18,
-
-    paddingBottom: 15,
-    textTransform: 'capitalize',
     borderBottomWidth: 2,
+    borderBottomColor: '#000',
   },
   backIcon: {
     position: 'absolute',

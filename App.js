@@ -1,3 +1,5 @@
+// eslint-disable-next-line
+// import './global.js';
 import React, { useState, useEffect, Fragment } from 'react';
 import { StyleSheet, Image, Text, View, FlatList } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -27,7 +29,14 @@ const App = () => {
       let ref_token = await store.getState().auth.refresh_token;
       startWebsocket(ref_token);
     }
+    if (ws.readyState === WebSocket.CLOSED) {
+      // Do your stuff...
+      callStartWebsocket();
+    }
     callStartWebsocket();
+    setTimeout(() => {
+      console.log('Status WS: ' + ws.readyState);
+    }, 5000)
     return () => {
       ws.close();
     };

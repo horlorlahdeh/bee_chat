@@ -13,8 +13,11 @@ import {
 } from './types';
 import AsyncStorage from '@react-native-community/async-storage';
 import setAuthToken from '../utils/setAuthToken';
-import { PrivateKey, cryptoUtils, Client } from '@hiveio/dhive';
+import { cryptoUtils, Client } from '@hiveio/dhive';
+import { PrivateKey } from '@esteemapp/dhive';
 // import CryptoJS from 'crypto-js'
+// import sha256 from 'crypto-js/sha256';
+import * as Crypto from 'expo-crypto';
 // import { ws, startWebsocket } from '../socket/socket';
 import { Buffer } from 'buffer';
 import * as SecureStore from 'expo-secure-store';
@@ -65,15 +68,18 @@ export const setRefreshToken = () => async (dispatch) => {
   }
 };
 // Login User
+// Login User
 export const login = (username, key) => async (dispatch) => {
   let token = await AsyncStorage.getItem('refresh_token');
   const ts = Date.now();
   // if(!wif) {
 
   // }
+  // let hash = Buffer.from(cryptoUtils.sha256(`${username}${ts}`));
+
   const privateKey = PrivateKey.fromString(key);
-  const sig = privateKey
-    .sign(Buffer.from(cryptoUtils.sha256(`${username}${ts}`)))
+  sig = privateKey
+    .sign(Buffer.from(cryptoUtils.sha256(username + ts)))
     .toString();
   console.log(sig);
   try {
@@ -205,33 +211,33 @@ export const pinLock = (username, key, pin) => async (dispatch) => {
     console.log(myKey, username);
   }
 
-  // const sig = await privateKey
-  //   .sign(Buffer.from(cryptoUtils.sha256(username + ts)))
-  //   .toString();
+  const sig = await privateKey
+    .sign(Buffer.from(cryptoUtils.sha256(username + ts)))
+    .toString();
 
-  // try {
-  //   const data = await axios.get(
-  //     'https://beechat.hive-engine.com/api/users/login',
-  //     {
-  //       params: {
-  //         username,
-  //         ts,
-  //         sig,
-  //       },
-  //     }
-  //   );
-  //   dispatch(
-  //     {
-  //       type: LOGIN_SUCCESS,
-  //       payload: data.data,
-  //     },
+  try {
+    const data = await axios.get(
+      'https://beechat.hive-engine.com/api/users/login',
+      {
+        params: {
+          username,
+          ts,
+          sig,
+        },
+      }
+    );
+    dispatch(
+      {
+        type: LOGIN_SUCCESS,
+        payload: data.data,
+      },
 
-  //     console.log(data.data)
-  //   );
-  //   dispatch(loadUser());
-  // } catch (err) {
-  //   console.error(err.message);
-  //   dispatch({ type: LOGIN_FAIL });
-  //   //do nothing for now
-  // }
+      console.log(data.data)
+    );
+    dispatch(loadUser());
+  } catch (err) {
+    console.error(err.message);
+    dispatch({ type: LOGIN_FAIL });
+    //do nothing for now
+  }
 };

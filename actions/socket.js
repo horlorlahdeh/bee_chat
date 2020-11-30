@@ -52,7 +52,6 @@ export const startWebsocket = (token) => async (dispatch) => {
 
 export const getWebSocketMessage = (context) => async (dispatch) => {
   // dispatch(getAllConversations());
-  console.log('take chat to up-side');
   try {
     ws.onmessage = async (e) => {
       let wsData = JSON.parse(e.data);
@@ -81,6 +80,13 @@ export const getWebSocketMessage = (context) => async (dispatch) => {
       if (wsData.type === 'acknowledged') {
         dispatch({
           type: SET_READ,
+          payload: wsData.payload,
+        });
+        console.log(wsData.payload);
+      }
+      if (wsData.type === 'message-deleted') {
+        dispatch({
+          type: DELETE_MESSAGE,
           payload: wsData.payload,
         });
         console.log(wsData.payload);

@@ -55,5 +55,5 @@ export const getUnread = () => async (dispatch) => {
     type: SET_UNREAD,
     payload: data,
   });
-  console.log(data.data)
+  // console.log(data.data)
 };

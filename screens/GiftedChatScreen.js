@@ -8,7 +8,8 @@ import React, {
   Fragment,
 } from 'react';
 import { StyleSheet, View, Platform } from 'react-native';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+import { useRoute } from '@react-navigation/native';
+// import KeyboardSpacer from 'react-native-keyboard-spacer';
 // import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -30,20 +31,26 @@ import { LoadingScreen } from '../components/LoadingScreen';
 import { ws } from '../socket/socket';
 
 const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
-  route: { params },
+  route: { params, name },
   messages: { conversation, conversations, loading, reply },
   auth,
+  navigation,
   getConversation,
   getAllConversations,
   sendMessage,
   deleteMessage,
   setRead,
 }) {
-  const [chatMessage, setChatMessage] = useState('');
+  const [data, setData] = useState({
+    didMount: conversation ? true : false,
+    messages: []
+  });
   const [didMount, setDidMount] = useState(conversation ? true : false);
   const [messages, setMessages] = useState([]);
   const { id, to } = params;
 
+
+  const route = useRoute();
   const chatRef = useRef();
   ws.onmessage = async (e) => {
     let dataFromServer = JSON.parse(e.data);
@@ -121,6 +128,17 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
     sendMessage(messages.text, to, id);
     chatRef.current.scrollToBottom();
   }, []);
+
+  const onDelete = (messageIdToDelete) => {
+    console.log(messageIdToDelete)
+    // setMessages((previousState) => ({
+    //   messages: previousState.messages.filter(
+    //     (message) => message.id !== messageIdToDelete
+    //   ),
+    // }));
+    deleteMessage(messageIdToDelete);
+  };
+
   const onLongPress = (context, message) => {
     console.log(context, message);
     const options = ['copy', 'Delete Message', 'Cancel'];
@@ -133,17 +151,16 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
       (buttonIndex) => {
         switch (buttonIndex) {
           case 0:
-            Clipboard.setString(this.props.currentMessage.text);
+            Clipboard.setString(message.text);
             break;
           case 1:
-            //code to delete
+            onDelete(message._id); //pass the function here
             break;
         }
       }
     );
   };
-
-  ////////////////
+  // New array for messages to fit into gifted chat component
   const newArray = conversation.map((message) => ({
     _id: message.id,
     createdAt: message.timestamp,
@@ -161,9 +178,8 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
       setTimeout(() => {
         chatRef.current.scrollToBottom();
       }, 1000);
-
-      console.log(to);
       setMessages(newArray);
+      console.log(route.name);
     }
     return () => {
       setDidMount(false);
@@ -198,7 +214,7 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
         onLongPress={onLongPress}
         // keyboardShouldPersistTaps={'always'}
       />
-      {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
+      {/* {Platform.OS === 'android' ? <KeyboardSpacer /> : null} */}
     </Fragment>
   );
 });
