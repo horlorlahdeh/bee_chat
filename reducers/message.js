@@ -5,6 +5,7 @@ import {
   SET_LIVE,
   SET_MEMBERS,
   SET_READ,
+  DELETE_MESSAGE,
 } from '../actions/types';
 
 const initialState = {
@@ -54,6 +55,13 @@ export default function (state = initialState, action) {
         unreadMessages: payload.data,
       };
       case SET_READ: unreadMessages.reduce((total, curr) => {}, 10)
+      case DELETE_MESSAGE: 
+      return {
+        ...state,
+        conversation: conversation.filter((message) => {
+          message.id !== payload.id
+        })
+      };
 
     default:
       return state;

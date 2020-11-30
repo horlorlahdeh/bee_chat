@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 // import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import { connect } from 'react-redux';
+import { KeycodeInput } from 'react-native-keycode';
 import { Header } from '../components/Header';
 import { Input } from '../components/Input';
 import { FilledButton } from '../components/FilledButton';
@@ -18,7 +19,7 @@ import { login, pinLock } from '../actions/user';
 
 const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput }) => {
   const [username, setUsername] = useState('');
-  const [code, setCode] = useState();
+  const [pincode, setPincode] = useState('');
   const [key, setKey] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -27,7 +28,7 @@ const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput
   
   useEffect(() => {
   
-    console.log(code);
+   
   }, []);
   
   return (
@@ -81,34 +82,15 @@ const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>SignIn With Smart Lock</Text>
-              <Input
-                style={styles.input}
-                placeholder={'Enter Your Hive Username'}
-                onChangeText={(text) => setUsername(text)}
-                value={username}
-                keyboardType={'email-address'}
+              <KeycodeInput
+                alphaNumeric={true}
+                length={6}
+                value={pincode}
+                onChange={(newValue) => setPincode(newValue)}
+                onComplete={(completedValue) => {
+                  alert('Completed! Value: ' + completedValue);
+                }}
               />
-              <Input
-                style={styles.input}
-                placeholder={'Enter Your Hive Posting Key'}
-                onChangeText={(val) => setKey(val)}
-                value={key}
-                secureTextEntry
-              />
-              <Input
-                style={styles.input}
-                placeholder={'Enter Your Pincode'}
-                onChangeText={(val) => setCode(val)}
-                value={code}
-                secureTextEntry={!showPassword}
-              />
-              {/* <SmoothPinCodeInput
-                ref={ref}
-                value={code}
-                onTextChange={(val) => setCode({ val })}
-                onFulfill={_checkCode}
-                onBackspace={_focusePrevInput}
-              /> */}
               <TouchableHighlight
                 style={{
                   ...styles.openButton,
@@ -168,7 +150,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    marginTop: -100,
   },
   modalView: {
     margin: 20,
@@ -176,7 +158,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 35,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: 'goldenrod',
     shadowOffset: {
       width: 0,
       height: 2,
