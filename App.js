@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-// import './global.js';
+import './global.js';
 import React, { useState, useEffect, Fragment } from 'react';
 import { StyleSheet, Image, Text, View, FlatList } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';

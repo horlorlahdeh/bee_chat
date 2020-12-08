@@ -22,7 +22,6 @@ import { getAllConversations } from '../actions/message';
 import { createChat } from '../actions/socket';
 import { ws, startWebsocket } from '../socket/socket';
 
-
 const _ChatListScreen = ({
   getAllConversations,
   createChat,
@@ -39,7 +38,7 @@ const _ChatListScreen = ({
   const [message, setMessage] = useState();
   const [recipient, setRecipient] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
- 
+
   useEffect(() => {
     if (didMount) {
       getAllConversations();
@@ -52,7 +51,7 @@ const _ChatListScreen = ({
         // Do your stuff...
         callStartWebsocket();
       }
-      callStartWebsocket()
+      callStartWebsocket();
     }
     return () => {
       setDidMount(false);
@@ -60,16 +59,34 @@ const _ChatListScreen = ({
 
     // eslint-disable-next-line
   }, [conversations]);
+  let mounted = didMount;
+  console.log(didMount);
   return (
+    
     <View style={styles.container}>
-      <MainAppHeader title={headerTexts} notification={unreadMessages > 0 ? unreadMessages.length : null} />
-      <FlatList
-        data={conversations}
-        renderItem={({ item }) => {
-          return <ChatListItem item={item} items={conversations} />;
-        }}
-        keyExtractor={(item, id) => id.toString()}
+      <MainAppHeader
+        title={headerTexts}
+        notification={unreadMessages > 0 ? unreadMessages.length : null}
       />
+      {(() => {
+        if (mounted)
+          return (
+            
+            <View>
+              <Text>Loading...</Text>
+            </View>
+          );
+        else
+          return (
+            <FlatList
+              data={conversations}
+              renderItem={({ item }) => {
+                return <ChatListItem item={item} items={conversations} />;
+              }}
+              keyExtractor={(item, id) => id.toString()}
+            />
+          );
+      })()}
       <TouchableOpacity
         style={{
           position: 'absolute',
