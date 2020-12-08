@@ -13,8 +13,8 @@ import {
 } from './types';
 import AsyncStorage from '@react-native-community/async-storage';
 import setAuthToken from '../utils/setAuthToken';
-import { cryptoUtils, Client } from '@hiveio/dhive';
-import { PrivateKey } from '@esteemapp/dhive';
+// import { cryptoUtils, Client } from '@hiveio/dhive';
+import { PrivateKey, cryptoUtils, Client } from '@esteemapp/dhive';
 // import CryptoJS from 'crypto-js'
 // import sha256 from 'crypto-js/sha256';
 import * as Crypto from 'expo-crypto';
@@ -77,8 +77,8 @@ export const login = (username, key) => async (dispatch) => {
   // }
   // let hash = Buffer.from(cryptoUtils.sha256(`${username}${ts}`));
 
-  const privateKey = PrivateKey.fromString(key);
-  sig = privateKey
+  var privateKey = PrivateKey.fromString(key);
+  var sig = privateKey
     .sign(Buffer.from(cryptoUtils.sha256(username + ts)))
     .toString();
   console.log(sig);
