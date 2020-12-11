@@ -16,7 +16,7 @@ export const getAllConversations = () => async (dispatch) => {
     type: SET_CONVERSATIONS,
     payload: data,
   });
-  // console.log(data)
+ 
 };
 export const getAllMembers = () => async (dispatch) => {
   const data = await axios.get(
@@ -26,7 +26,7 @@ export const getAllMembers = () => async (dispatch) => {
     type: SET_MEMBERS,
     payload: data,
   });
-  // console.log(data)
+  
 };
 
 export const getConversation = (id) => async (dispatch) => {
@@ -44,7 +44,7 @@ export const getConversation = (id) => async (dispatch) => {
   });
   dispatch(getWebSocketMessage());
   dispatch(getAllConversations());
-  // console.log(data)
+  
 };
 export const getUnread = () => async (dispatch) => {
   const data = await axios.get(
@@ -55,5 +55,5 @@ export const getUnread = () => async (dispatch) => {
     type: SET_UNREAD,
     payload: data,
   });
-  // console.log(data.data)
+ 
 };

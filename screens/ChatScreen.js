@@ -51,7 +51,7 @@ const _ChatScreen = ({
   };
   useEffect(() => {
     getConversation(id);
-    console.log(to);
+    
     // eslint-disable-next-line
   }, []);
   return (

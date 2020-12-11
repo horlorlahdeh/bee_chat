@@ -7,6 +7,7 @@ import {
   Modal,
   TouchableHighlight,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 // import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import { connect } from 'react-redux';
 import { KeycodeInput } from 'react-native-keycode';
@@ -16,6 +17,7 @@ import { FilledButton } from '../components/FilledButton';
 import { TextButton } from '../components/TextButton';
 import { Error } from '../components/Error';
 import { login, pinLock } from '../actions/user';
+import { ws, startWebsocket } from '../socket/socket';
 
 const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput }) => {
   const [username, setUsername] = useState('');
@@ -24,11 +26,14 @@ const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput
   const [showPassword, setShowPassword] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const chatRef = useRef();
+  // const chatRef = useRef();
   
+  async function callStartWebsocket() {
+    let token = await AsyncStorage.getItem('refresh_token');
+    startWebsocket(token);
+  }
+ 
   useEffect(() => {
-  
-   
   }, []);
   
   return (
@@ -55,6 +60,7 @@ const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput
         onPress={() => {
           // alert('Login Success')
           login(username, key);
+          callStartWebsocket();
           // navigation.navigate('Chats');
         }}
       />

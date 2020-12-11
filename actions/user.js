@@ -143,7 +143,7 @@ export const getFriendRequests = () => async (dispatch) => {
     const data = await axios.get(
       'https://beechat.hive-engine.com/api/users/friend-requests'
     );
-    console.log(data.data);
+    
     dispatch({
       type: GET_FRIENDS_REQUESTS,
       payload: data.data,
@@ -159,7 +159,6 @@ export const userSettings = () => async (dispatch) => {
     const data = await axios.get(
       'https://beechat.hive-engine.com/api/users/users/settings'
     );
-    console.log(data.data);
     dispatch({
       type: USER_SETTINGS,
       payload: data.data,
@@ -175,7 +174,7 @@ export const userChannels = () => async (dispatch) => {
     const data = await axios.get(
       'https://beechat.hive-engine.com/api/users/channels'
     );
-    console.log(data.data);
+   
     dispatch({
       type: USER_CHANNELS,
       payload: data.data,
@@ -192,7 +191,6 @@ export const getBalances = (username) => async (dispatch) => {
 
     let userDetails = await hClient.database.getAccounts([account]);
     let data = userDetails[0];
-    console.log(data);
     dispatch({
       type: HIVE_DATA,
       payload: data,
@@ -232,7 +230,7 @@ export const pinLock = (username, key, pin) => async (dispatch) => {
         payload: data.data,
       },
 
-      console.log(data.data)
+      
     );
     dispatch(loadUser());
   } catch (err) {

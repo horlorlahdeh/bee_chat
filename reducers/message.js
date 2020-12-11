@@ -27,7 +27,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
         conversations: payload.data,
-
       };
     case SET_MEMBERS:
       return {
@@ -40,7 +39,6 @@ export default function (state = initialState, action) {
         conversation: payload.data,
       };
     case SET_LIVE:
-      // console.log(payload)
       return {
         ...state,
         reply:
@@ -54,13 +52,19 @@ export default function (state = initialState, action) {
         ...state,
         unreadMessages: payload.data,
       };
-      case SET_READ: unreadMessages.reduce((total, curr) => {}, 10)
-      case DELETE_MESSAGE: 
+    case SET_READ:
+      return {
+        ...state,
+        // unreadMessages: unreadMessages.filter(
+        //   (msg) => msg.conversation_id !== payload
+        // ),
+      };
+    case DELETE_MESSAGE:
       return {
         ...state,
         conversation: conversation.filter((message) => {
-          message.id !== payload.id
-        })
+          message.id !== payload.id;
+        }),
       };
 
     default:

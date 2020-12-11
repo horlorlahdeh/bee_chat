@@ -8,9 +8,6 @@ import { getAllConversations } from '../actions/message';
 
 const _GeneralHeader = ({ items }) => {
   const navigation = useNavigation();
-  useEffect(() => {
-    console.log(items);
-  }, []);
   return (
     <View style={styles.container}>
       <TouchableOpacity

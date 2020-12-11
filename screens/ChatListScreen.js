@@ -18,13 +18,13 @@ import { ChatListItem } from '../components/ChatListItem';
 import { Header } from '../components/Header';
 import { MainAppHeader } from '../components/MainAppHeader';
 import { connect } from 'react-redux';
-import { getAllConversations } from '../actions/message';
+import { getAllConversations, getUnread } from '../actions/message';
 import { createChat } from '../actions/socket';
 import { ws, startWebsocket } from '../socket/socket';
 
 const _ChatListScreen = ({
   getAllConversations,
-  createChat,
+  createChat, getUnread,
   message: { conversations, unreadMessages },
 }) => {
   const [headerTexts, setHeaderText] = useState({
@@ -38,11 +38,22 @@ const _ChatListScreen = ({
   const [message, setMessage] = useState();
   const [recipient, setRecipient] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  ws.onmessage = async (e) => {
+    let dataFromServer = JSON.parse(e.data);
+    if (
+      dataFromServer.type === 'chat-message'
+    ) {
+      getAllConversations();
+      getUnread()
+    }
+  };
 
   useEffect(() => {
+    setDidMount(true)
     if (didMount) {
       getAllConversations();
-      // console.log(conversations);
+      getUnread()
+      
       async function callStartWebsocket() {
         let token = await AsyncStorage.getItem('refresh_token');
         startWebsocket(token);
@@ -59,8 +70,8 @@ const _ChatListScreen = ({
 
     // eslint-disable-next-line
   }, [conversations]);
-  let mounted = didMount;
-  console.log(didMount);
+  let mounted = !didMount;
+  
   return (
     
     <View style={styles.container}>
@@ -81,7 +92,17 @@ const _ChatListScreen = ({
             <FlatList
               data={conversations}
               renderItem={({ item }) => {
-                return <ChatListItem item={item} items={conversations} />;
+                return (
+                  <ChatListItem
+                    item={item}
+                    items={conversations}
+                    count={unreadMessages.reduce(
+                      (acc, cur) =>
+                        cur.conversation_id === item.id ? ++acc : acc,
+                      0
+                    )}
+                  />
+                );
               }}
               keyExtractor={(item, id) => id.toString()}
             />
@@ -225,7 +246,7 @@ const mapStateToProps = (state) => {
 
 const ChatListScreen = connect(mapStateToProps, {
   getAllConversations,
-  createChat,
+  createChat, getUnread
 })(_ChatListScreen);
 
 export { ChatListScreen };

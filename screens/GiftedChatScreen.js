@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { StyleSheet, View, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-// import KeyboardSpacer from 'react-native-keyboard-spacer';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 // import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -32,7 +32,7 @@ import { ws } from '../socket/socket';
 
 const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
   route: { params, name },
-  messages: { conversation, conversations, loading, reply },
+  messages: { conversation, loading, reply },
   auth,
   navigation,
   getConversation,
@@ -43,12 +43,12 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
 }) {
   const [data, setData] = useState({
     didMount: conversation ? true : false,
-    messages: []
+    messages: [],
+    loading: loading ? true : false,
   });
-  const [didMount, setDidMount] = useState(conversation ? true : false);
+  // const [didMount, setDidMount] = useState(conversation ? true : false);
   const [messages, setMessages] = useState([]);
   const { id, to } = params;
-
 
   const route = useRoute();
   const chatRef = useRef();
@@ -58,7 +58,6 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
       dataFromServer.type === 'chat-message' &&
       dataFromServer.payload.from !== auth.username
     ) {
-      console.log(dataFromServer, 'waiting for message');
       let replyMessage = dataFromServer.payload;
       let newMessageObj = {
         _id: replyMessage.id,
@@ -112,7 +111,6 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages, false)
     );
-    console.log(messages[0].text, 'check index');
     sendMessage(messages[0].text, to, id);
     chatRef.current.scrollToBottom();
   };
@@ -124,13 +122,12 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages, false)
     );
-    console.log(messages.text, 'check index');
+
     sendMessage(messages.text, to, id);
     chatRef.current.scrollToBottom();
   }, []);
 
   const onDelete = (messageIdToDelete) => {
-    console.log(messageIdToDelete)
     // setMessages((previousState) => ({
     //   messages: previousState.messages.filter(
     //     (message) => message.id !== messageIdToDelete
@@ -140,7 +137,6 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
   };
 
   const onLongPress = (context, message) => {
-    console.log(context, message);
     const options = ['copy', 'Delete Message', 'Cancel'];
     const cancelButtonIndex = options.length - 1;
     context.actionSheet().showActionSheetWithOptions(
@@ -172,22 +168,24 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
     },
   }));
   useEffect(() => {
-    if (didMount) {
+    
+    // setRead(id);
+    if (data.didMount) {
       getConversation(id);
       setRead(id);
       setTimeout(() => {
         chatRef.current.scrollToBottom();
       }, 1000);
       setMessages(newArray);
-      console.log(route.name);
+      console.log('Check state loader' + data.loading);
     }
     return () => {
-      setDidMount(false);
+      setData({ ...data, didMount: false });
     };
     // eslint-disable-next-line
-  }, [conversation, reply]);
+  }, [conversation, reply, loading]);
 
-  return didMount ? (
+  return !loading ? (
     <LoadingScreen />
   ) : (
     <Fragment>
@@ -212,9 +210,10 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
         renderUsernameOnMessage={true}
         inverted={false}
         onLongPress={onLongPress}
+        loadEarlier={true}
         // keyboardShouldPersistTaps={'always'}
       />
-      {/* {Platform.OS === 'android' ? <KeyboardSpacer /> : null} */}
+      {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
     </Fragment>
   );
 });

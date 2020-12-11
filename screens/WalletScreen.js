@@ -140,13 +140,6 @@ const _WalletScreen = ({
                 value={code}
                 secureTextEntry={!showPassword}
               />
-              {/* <SmoothPinCodeInput
-                ref={ref}
-                value={code}
-                onTextChange={(val) => setCode({ val })}
-                onFulfill={_checkCode}
-                onBackspace={_focusePrevInput}
-              /> */}
               <TouchableHighlight
                 style={{
                   ...styles.openButton,

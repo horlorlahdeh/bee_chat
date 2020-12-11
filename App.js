@@ -19,7 +19,6 @@ let ref_token = store.getState().auth.refresh_token;
 
 if (token) {
   setAuthToken(token);
-  console.log(token);
 }
 
 const App = () => {

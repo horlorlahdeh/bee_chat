@@ -35,7 +35,7 @@ const _GroupChatScreen = ({ userChannels, channels, message }) => {
   ]);
   useEffect(() => {
     userChannels();
-    console.log(channels);
+    
   }, []);
   return (
     <View style={styles.container}>

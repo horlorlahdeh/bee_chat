@@ -25,8 +25,6 @@ export const _MainAppHeader = ({
   useEffect(() => {
     if (didMount) {
       getUnread();
-      console.log(notification);
-      console.log(route.name);
     }
     return () => {
       // cleanup
