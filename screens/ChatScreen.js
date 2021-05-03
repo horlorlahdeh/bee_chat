@@ -22,7 +22,6 @@ import {
   getAllMembers,
 } from '../actions/message';
 import { createChat, sendMessage, getWebSocketMessage } from '../actions/socket';
-import AsyncStorage from '@react-native-community/async-storage';
 
 const _ChatScreen = ({
   route: { params },

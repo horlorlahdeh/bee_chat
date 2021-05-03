@@ -2,7 +2,7 @@ import { SOCKET_OPEN, SET_LIVE, SEND_MSG, DELETE_MESSAGE, SET_READ } from './typ
 import { ws } from '../socket/socket';
 import store from '../store';
 import AsyncStorage from '@react-native-community/async-storage';
-// import { getAllConversations } from './message';
+
 
 export const connectWebsocket = () => async (dispatch) => {
   try {
@@ -20,33 +20,33 @@ export const connectWebsocket = () => async (dispatch) => {
     console.error(err);
   }
 };
-export const startWebsocket = (token) => async (dispatch) => {
-  let socket = ws;
-  socket.onopen = (e) => {
-    let payload = {
-      token: token,
-    };
+// export const startWebsocket = (token) => async (dispatch) => {
+//   let socket = ws;
+//   socket.onopen = (e) => {
+//     let payload = {
+//       token: token,
+//     };
 
-    socket.send(JSON.stringify({ type: 'authenticate', payload: payload }));
-  };
-  socket.onmessage = function (e) {
+//     socket.send(JSON.stringify({ type: 'authenticate', payload: payload }));
+//   };
+//   socket.onmessage = function (e) {
    
-    if (!JSON.parse(e.data).payload.authenticated) {
-      setTimeout(startWebsocket, 500);
-    }
-  };
-  socket.onerror = function (e) {
-    console.log(e + 'error');
-  };
-  socket.onclose = function () {
-    // connection closed, discard old websocket and create a new one in 5s
-    socket = null;
-    setTimeout(startWebsocket, 5000);
-  };
-};
+//     if (!JSON.parse(e.data).payload.authenticated) {
+//       setTimeout(startWebsocket, 500);
+//     }
+//   };
+//   socket.onerror = function (e) {
+//     console.error(e + 'error');
+//   };
+//   socket.onclose = function () {
+//     // connection closed, discard old websocket and create a new one in 5s
+//     socket = null;
+//     setTimeout(startWebsocket, 5000);
+//   };
+// };
 
 export const getWebSocketMessage = (context) => async (dispatch) => {
-  // dispatch(getAllConversations());
+  
   try {
     ws.onmessage = async (e) => {
       let wsData = JSON.parse(e.data);

@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from "expo-status-bar";
 import React, {
   useState,
   useEffect,
@@ -6,29 +6,29 @@ import React, {
   useRef,
   useMemo,
   Fragment,
-} from 'react';
-import { StyleSheet, View, Platform } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+} from "react";
+import { StyleSheet, View, Platform } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import KeyboardSpacer from "react-native-keyboard-spacer";
 // import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
-import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import { GeneralHeader } from '../components/GeneralHeader';
-import { connect } from 'react-redux';
+import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { GeneralHeader } from "../components/GeneralHeader";
+import { connect } from "react-redux";
 import {
   getAllConversations,
   getConversation,
   getAllMembers,
-} from '../actions/message';
+} from "../actions/message";
 import {
   createChat,
   sendMessage,
   getWebSocketMessage,
   deleteMessage,
   setRead,
-} from '../actions/socket';
-import { LoadingScreen } from '../components/LoadingScreen';
-import { ws } from '../socket/socket';
+} from "../actions/socket";
+import { LoadingScreen } from "../components/LoadingScreen";
+import { ws } from "../socket/socket";
 
 const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
   route: { params, name },
@@ -55,7 +55,7 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
   ws.onmessage = async (e) => {
     let dataFromServer = JSON.parse(e.data);
     if (
-      dataFromServer.type === 'chat-message' &&
+      dataFromServer.type === "chat-message" &&
       dataFromServer.payload.from !== auth.username
     ) {
       let replyMessage = dataFromServer.payload;
@@ -80,18 +80,18 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
         wrapperStyle={{
           right: {
             // Here is the color change
-            backgroundColor: 'goldenrod',
+            backgroundColor: "goldenrod",
             marginBottom: 2,
           },
           left: {
             // Here is the color change
-            backgroundColor: 'lightyellow',
+            backgroundColor: "lightyellow",
             marginBottom: 2,
           },
         }}
         textStyle={{
           right: {
-            color: '#000',
+            color: "#000",
           },
         }}
       />
@@ -101,7 +101,7 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
     return (
       <Send {...props}>
         <View style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
-          <Icon name='paper-plane' size={30} color='#000' />
+          <Icon name="paper-plane" size={30} color="#000" />
         </View>
       </Send>
     );
@@ -137,7 +137,7 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
   };
 
   const onLongPress = (context, message) => {
-    const options = ['copy', 'Delete Message', 'Cancel'];
+    const options = ["copy", "Delete Message", "Cancel"];
     const cancelButtonIndex = options.length - 1;
     context.actionSheet().showActionSheetWithOptions(
       {
@@ -168,16 +168,14 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
     },
   }));
   useEffect(() => {
-    
     // setRead(id);
     if (data.didMount) {
       getConversation(id);
       setRead(id);
       setTimeout(() => {
         chatRef.current.scrollToBottom();
-      }, 1000);
+      }, 100);
       setMessages(newArray);
-      console.log('Check state loader' + data.loading);
     }
     return () => {
       setData({ ...data, didMount: false });
@@ -185,7 +183,7 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
     // eslint-disable-next-line
   }, [conversation, reply, loading]);
 
-  return !loading ? (
+  return loading ? (
     <LoadingScreen />
   ) : (
     <Fragment>
@@ -213,7 +211,7 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
         loadEarlier={true}
         // keyboardShouldPersistTaps={'always'}
       />
-      {Platform.OS === 'android' ? <KeyboardSpacer /> : null}
+      {Platform.OS === "android" ? <KeyboardSpacer /> : null}
     </Fragment>
   );
 });
@@ -221,11 +219,11 @@ const _GiftedChatScreen = React.memo(function _GiftedChatScreen({
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    backgroundColor: '#eee',
-    position: 'relative',
+    backgroundColor: "#eee",
+    position: "relative",
   },
   generalHeader: {
-    position: 'relative',
+    position: "relative",
     width: 100,
     zIndex: 999,
     top: 0,
@@ -233,11 +231,11 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    color: '#000',
+    color: "#000",
     fontSize: 18,
     paddingHorizontal: 30,
     paddingBottom: 15,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   bubblesWrapper: {
     marginBottom: 75,
@@ -245,13 +243,13 @@ const styles = StyleSheet.create({
 
   input: {
     marginTop: 5,
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
     fontSize: 18,
     paddingVertical: 30,
     borderRadius: 0,
     borderTopWidth: 0.5,
-    borderTopColor: '#ccc',
-    position: 'absolute',
+    borderTopColor: "#ccc",
+    position: "absolute",
     bottom: 0,
     left: 0,
   },

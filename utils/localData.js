@@ -3,13 +3,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 export const getToken = async () => {
   try {
-    const value = await AsyncStorage.getItem('token');
+    const value = await AsyncStorage.getItem('refresh_token');
     if (value !== null) {
       return value;
     }
   } catch (e) {
     // error reading value
-    console.log(e);
+    console.error(e);
   }
 };
 
@@ -18,7 +18,7 @@ export const storeToken = async (value) => {
     await AsyncStorage.setItem('token', value);
   } catch (e) {
     // saving error
-    console.log(e);
+    console.error(e);
   }
 };
 export const removeToken = async (value) => {
@@ -26,7 +26,7 @@ export const removeToken = async (value) => {
     await AsyncStorage.removeItem('token');
   } catch (e) {
     // saving error
-    console.log(e);
+    console.error(e);
   }
 };
 
@@ -38,7 +38,7 @@ export const storeRefreshToken = async (value) => {
             return value
         }
     } catch (e) {
-        console.log(e)
+        console.error(e)
     }
 }
 export const getRefreshToken = async () => {
@@ -48,7 +48,7 @@ export const getRefreshToken = async () => {
             return value
         }
     } catch (e) {
-        console.log(e)
+        console.error(e)
     }
 }
 export const removeRefreshToken = async () => {
@@ -58,6 +58,6 @@ export const removeRefreshToken = async () => {
             return value
         }
     } catch (e) {
-        console.log(e)
+        console.error(e)
     }
 }

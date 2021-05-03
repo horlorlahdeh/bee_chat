@@ -1,6 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { StatusBar } from "expo-status-bar";
+import React, { useState, useEffect } from "react";
+import Icon from "react-native-vector-icons/FontAwesome5";
 import {
   StyleSheet,
   Image,
@@ -10,81 +10,71 @@ import {
   TouchableOpacity,
   Modal,
   TouchableHighlight,
-} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import { Input } from '../components/Input';
-import { TextButton } from '../components/TextButton';
-import { ChatListItem } from '../components/ChatListItem';
-import { Header } from '../components/Header';
-import { MainAppHeader } from '../components/MainAppHeader';
-import { connect } from 'react-redux';
-import { getAllConversations, getUnread } from '../actions/message';
-import { createChat } from '../actions/socket';
-import { ws, startWebsocket } from '../socket/socket';
+} from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
+import { Input } from "../components/Input";
+import { TextButton } from "../components/TextButton";
+import { ChatListItem } from "../components/ChatListItem";
+import { MainAppHeader } from "../components/MainAppHeader";
+import { connect } from "react-redux";
+import { getAllConversations, getUnread } from "../actions/message";
+import { createChat } from "../actions/socket";
+import { ws, startWebsocket } from "../socket/socket";
+
+
 
 const _ChatListScreen = ({
   getAllConversations,
-  createChat, getUnread,
-  message: { conversations, unreadMessages },
+  createChat,
+  getUnread,
+  message: { conversations, unreadMessages, loading },
 }) => {
   const [headerTexts, setHeaderText] = useState({
-    privateTitle: 'Private',
-    groupTitle: 'Groups',
-    friendsTitle: 'Friends',
-    searchTitle: 'Search',
+    privateTitle: "Private",
+    groupTitle: "Groups",
+    friendsTitle: "Friends",
+    searchTitle: "Search",
     id: 1,
   });
   const [didMount, setDidMount] = useState(conversations ? true : false);
   const [message, setMessage] = useState();
-  const [recipient, setRecipient] = useState('');
+  const [recipient, setRecipient] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   ws.onmessage = async (e) => {
     let dataFromServer = JSON.parse(e.data);
-    if (
-      dataFromServer.type === 'chat-message'
-    ) {
+    if (dataFromServer.type === "chat-message") {
       getAllConversations();
-      getUnread()
+      getUnread();
     }
   };
-
+  
   useEffect(() => {
-    setDidMount(true)
+    setDidMount(true);
     if (didMount) {
-      getAllConversations();
-      getUnread()
-      
-      async function callStartWebsocket() {
-        let token = await AsyncStorage.getItem('refresh_token');
-        startWebsocket(token);
-      }
-      if (ws.readyState === 0 || 2 || 3) {
-        // Do your stuff...
-        callStartWebsocket();
-      }
-      callStartWebsocket();
+      setTimeout(() => {
+        getAllConversations();
+        getUnread();
+      }, 500);
     }
     return () => {
       setDidMount(false);
     };
 
     // eslint-disable-next-line
-  }, [conversations]);
-  let mounted = !didMount;
-  
+  }, [getAllConversations]);
+ 
+
   return (
-    
     <View style={styles.container}>
       <MainAppHeader
         title={headerTexts}
         notification={unreadMessages > 0 ? unreadMessages.length : null}
       />
       {(() => {
-        if (mounted)
+        if (loading)
           return (
-            
-            <View>
-              <Text>Loading...</Text>
+            <View style={styles.loadingWrapper}>
+              <Text style={styles.loading}>Loading...</Text>
             </View>
           );
         else
@@ -110,29 +100,29 @@ const _ChatListScreen = ({
       })()}
       <TouchableOpacity
         style={{
-          position: 'absolute',
+          position: "absolute",
           bottom: 50,
           right: 30,
           padding: 20,
           height: 70,
           width: 70,
           borderRadius: 100 / 2,
-          backgroundColor: 'goldenrod',
+          backgroundColor: "goldenrod",
           zIndex: 999,
         }}
         onPress={() => {
           setModalVisible(true);
         }}
       >
-        <Icon name='paper-plane' size={30} color='#000' />
+        <Icon name="paper-plane" size={30} color="#000" />
       </TouchableOpacity>
       <View style={styles.outterCenteredView}>
         <Modal
-          animationType='slide'
+          animationType="slide"
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
+            Alert.alert("Modal has been closed.");
           }}
         >
           <View style={styles.centeredView}>
@@ -140,21 +130,21 @@ const _ChatListScreen = ({
               <Text style={styles.modalText}>Create Conversation</Text>
               <Input
                 style={styles.input}
-                placeholder={'Enter Recipient Username'}
+                placeholder={"Enter Recipient Username"}
                 onChangeText={(text) => setRecipient(text)}
                 value={recipient}
-                keyboardType={'email-address'}
+                keyboardType={"email-address"}
               />
               <Input
                 style={styles.input}
-                placeholder={'Enter Message'}
+                placeholder={"Enter Message"}
                 onChangeText={(val) => setMessage(val)}
                 value={message}
               />
               <TouchableHighlight
                 style={{
                   ...styles.openButton,
-                  backgroundColor: 'goldenrod',
+                  backgroundColor: "goldenrod",
                   marginTop: 20,
                 }}
                 onPress={() => {
@@ -165,7 +155,7 @@ const _ChatListScreen = ({
               </TouchableHighlight>
               <TextButton
                 style={styles.textButton}
-                title={'close'}
+                title={"close"}
                 onPress={() => {
                   setModalVisible(!modalVisible);
                   getAllConversations();
@@ -182,15 +172,25 @@ const _ChatListScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
-    backgroundColor: '#eee',
+    position: "relative",
+    backgroundColor: "#eee",
+  },
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loading: {
+    textAlign: "center",
+    marginVertical: "auto",
+    marginHorizontal: "auto",
   },
   text: {
-    color: '#000',
+    color: "#000",
     fontSize: 18,
     paddingHorizontal: 30,
     paddingBottom: 15,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   input: {
     marginVertical: 8,
@@ -198,18 +198,18 @@ const styles = StyleSheet.create({
     minWidth: 280,
   },
   centeredView: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 220,
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -219,19 +219,19 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   openButton: {
-    backgroundColor: 'goldenrod',
+    backgroundColor: "goldenrod",
     borderRadius: 5,
     padding: 10,
     elevation: 2,
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   textButton: {
     marginTop: 15,
@@ -246,7 +246,8 @@ const mapStateToProps = (state) => {
 
 const ChatListScreen = connect(mapStateToProps, {
   getAllConversations,
-  createChat, getUnread
+  createChat,
+  getUnread,
 })(_ChatListScreen);
 
 export { ChatListScreen };

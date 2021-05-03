@@ -27,24 +27,29 @@ export default function (state = initialState, action) {
       return {
         ...state,
         conversations: payload.data,
+        loading: false
       };
     case SET_MEMBERS:
       return {
         ...state,
         members: payload.data,
+        loading: false
       };
     case SET_CONVERSATION:
       return {
         ...state,
         conversation: payload.data,
+        // loading: false
       };
     case SET_LIVE:
       return {
         ...state,
+        loading:false,
         reply:
           payload.to !== null
             ? state.reply.push(payload)
             : state.reply.concat(payload),
+
       };
 
     case SET_UNREAD:
@@ -55,6 +60,7 @@ export default function (state = initialState, action) {
     case SET_READ:
       return {
         ...state,
+        loading: false,
         // unreadMessages: unreadMessages.filter(
         //   (msg) => msg.conversation_id !== payload
         // ),
@@ -65,6 +71,7 @@ export default function (state = initialState, action) {
         conversation: conversation.filter((message) => {
           message.id !== payload.id;
         }),
+        loading: false,
       };
 
     default:

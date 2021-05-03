@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Image,
@@ -6,61 +6,71 @@ import {
   View,
   Modal,
   TouchableHighlight,
-} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+} from "react-native";
+import AsyncStorage from "@react-native-community/async-storage";
 // import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
-import { connect } from 'react-redux';
-import { KeycodeInput } from 'react-native-keycode';
-import { Header } from '../components/Header';
-import { Input } from '../components/Input';
-import { FilledButton } from '../components/FilledButton';
-import { TextButton } from '../components/TextButton';
-import { Error } from '../components/Error';
-import { login, pinLock } from '../actions/user';
-import { ws, startWebsocket } from '../socket/socket';
+import { connect } from "react-redux";
+import { KeycodeInput } from "react-native-keycode";
+import { Header } from "../components/Header";
+import { Input } from "../components/Input";
+import { FilledButton } from "../components/FilledButton";
+import { TextButton } from "../components/TextButton";
+import { Error } from "../components/Error";
+import { login, pinLock } from "../actions/user";
+import {ws} from '../socket/socket'
 
-const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput }) => {
-  const [username, setUsername] = useState('');
-  const [pincode, setPincode] = useState('');
-  const [key, setKey] = useState('');
+const _LoginScreen = ({
+  navigation,
+  login,
+  pinLock,
+  _checkCode,
+  _focusePrevInput,
+}) => {
+  const [username, setUsername] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [key, setKey] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // const chatRef = useRef();
-  
-  async function callStartWebsocket() {
-    let token = await AsyncStorage.getItem('refresh_token');
-    startWebsocket(token);
+  async function connectWS() {
+    let token = await AsyncStorage.getItem("refresh_token");
+    let payload = {
+      token: token,
+    };
+    console.log(payload);
+    ws.onopen = async (e) => {
+      console.log("Connected to Websockets");
+
+      ws.send(JSON.stringify({ type: "authenticate", payload: payload }));
+      console.log("Websocket Client Connected", e, token);
+    };
   }
- 
-  useEffect(() => {
-  }, []);
-  
+
   return (
     <View style={styles.container}>
       <Header style={styles.title}>LOGIN</Header>
-      <Error error={''} style={styles.errors} />
+      <Error error={""} style={styles.errors} />
       <Input
         style={styles.input}
-        placeholder={'Enter Your Hive Username'}
+        placeholder={"Enter Your Hive Username"}
         onChangeText={(text) => setUsername(text)}
         value={username}
-        keyboardType={'email-address'}
+        keyboardType={"email-address"}
       />
       <Input
         style={styles.input}
-        placeholder={'Enter Your Hive Posting Key'}
+        placeholder={"Enter Your Hive Posting Key"}
         onChangeText={(val) => setKey(val)}
         value={key}
         secureTextEntry
       />
       <FilledButton
         style={styles.loginButton}
-        title={'Login'}
+        title={"Login"}
         onPress={() => {
           // alert('Login Success')
           login(username, key);
-          callStartWebsocket();
+          connectWS();
           // navigation.navigate('Chats');
         }}
       />
@@ -71,18 +81,18 @@ const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput
       />
       <TextButton
         style={styles.textButton}
-        title={'Smart Lock'}
+        title={"Smart Lock"}
         onPress={() => {
           setModalVisible(true);
         }}
       />
       <View style={styles.centeredView}>
         <Modal
-          animationType='slide'
+          animationType="slide"
           transparent={true}
           visible={modalVisible}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
+            Alert.alert("Modal has been closed.");
           }}
         >
           <View style={styles.centeredView}>
@@ -94,13 +104,13 @@ const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput
                 value={pincode}
                 onChange={(newValue) => setPincode(newValue)}
                 onComplete={(completedValue) => {
-                  alert('Completed! Value: ' + completedValue);
+                  alert("Completed! Value: " + completedValue);
                 }}
               />
               <TouchableHighlight
                 style={{
                   ...styles.openButton,
-                  backgroundColor: 'goldenrod',
+                  backgroundColor: "goldenrod",
                   marginTop: 20,
                 }}
                 onPress={() => {
@@ -111,7 +121,7 @@ const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput
               </TouchableHighlight>
               <TextButton
                 style={styles.textButton}
-                title={'Hide'}
+                title={"Hide"}
                 onPress={() => {
                   setModalVisible(!modalVisible);
                 }}
@@ -127,8 +137,8 @@ const _LoginScreen = ({ navigation, login, pinLock, _checkCode, _focusePrevInput
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
-    alignItems: 'center',
+    backgroundColor: "#eee",
+    alignItems: "center",
     padding: 20,
   },
   title: {
@@ -147,24 +157,24 @@ const styles = StyleSheet.create({
     marginTop: 40,
     fontSize: 12,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   errors: {
     marginBottom: 8,
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: -100,
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: 'goldenrod',
+    alignItems: "center",
+    shadowColor: "goldenrod",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -174,19 +184,19 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   openButton: {
-    backgroundColor: 'goldenrod',
+    backgroundColor: "goldenrod",
     borderRadius: 5,
     padding: 10,
     elevation: 2,
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 const LoginScreen = connect(null, { login, pinLock })(_LoginScreen);

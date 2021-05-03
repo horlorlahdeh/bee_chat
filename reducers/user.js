@@ -50,9 +50,8 @@ export default function (state = initialState, action) {
       };
 
     case LOGIN_SUCCESS:
-      storeToken(payload.token);
       storeRefreshToken(payload.refresh_token);
-
+      storeToken(payload.token);
       return {
         ...state,
         isAuthenticated: true,
